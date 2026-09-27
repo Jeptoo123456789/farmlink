@@ -1,0 +1,8 @@
+{
+  "name": "FarmLink - Farm Produce Marketplace",
+  "description": "A modern digital agricultural marketplace connecting trusted farmers and producers directly with wholesale and consumer buyers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
