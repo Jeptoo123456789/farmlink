@@ -1,0 +1,355 @@
+{
+  "users": [
+    {
+      "id": "user_farmer_001",
+      "name": "Thomas Kiptoo",
+      "email": "farmer@farmlink.com",
+      "password_hash": "$2a$10$wQ9K4gA1jXjO9z6R.uR0nOBb9C6f4Xm6p8Yk1J6hFqHqN9sM7d3xK",
+      "role": "seller",
+      "phone": "+1 (555) 234-5678",
+      "location": "Highland Organic Valley, Eldoret Region",
+      "address": "Plot 44, Green Meadows Farm Road",
+      "bio": "Third-generation regenerative farmer specializing in pesticide-free heirloom vegetables, orchard fruits, and pasture-raised dairy.",
+      "avatar_url": "/src/assets/images/farmlink_farmer_seller_1790495447477.jpg",
+      "created_at": "2026-01-10T08:00:00.000Z"
+    },
+    {
+      "id": "user_buyer_001",
+      "name": "Elena Vance",
+      "email": "buyer@farmlink.com",
+      "password_hash": "$2a$10$wQ9K4gA1jXjO9z6R.uR0nOBb9C6f4Xm6p8Yk1J6hFqHqN9sM7d3xK",
+      "role": "buyer",
+      "phone": "+1 (555) 876-5432",
+      "location": "Riverside Metro District",
+      "address": "742 Evergreen Terrace, Apt 4B",
+      "bio": "Culinary chef and farm-to-table enthusiast sourcing fresh weekly ingredients for home and boutique catering.",
+      "avatar_url": "",
+      "created_at": "2026-02-01T10:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat_vegetables",
+      "name": "Vegetables",
+      "slug": "vegetables",
+      "description": "Crisp field-grown, greenhouse, and heirloom vegetables harvested fresh daily.",
+      "icon": "Carrot"
+    },
+    {
+      "id": "cat_fruits",
+      "name": "Fruits & Orchards",
+      "slug": "fruits",
+      "description": "Sun-ripened orchard fruits, berries, and seasonal citrus picked at peak sweetness.",
+      "icon": "Apple"
+    },
+    {
+      "id": "cat_dairy",
+      "name": "Dairy & Eggs",
+      "slug": "dairy-eggs",
+      "description": "Pasture-raised brown eggs, fresh farm milk, cultured butter, and artisanal cheeses.",
+      "icon": "Egg"
+    },
+    {
+      "id": "cat_cereals",
+      "name": "Cereals & Grains",
+      "slug": "cereals-grains",
+      "description": "Stone-ground flours, heritage maize, quinoa, oats, and whole farm grains.",
+      "icon": "Wheat"
+    },
+    {
+      "id": "cat_herbs",
+      "name": "Fresh Herbs",
+      "slug": "fresh-herbs",
+      "description": "Aromatic culinaries, greenhouse basil, rosemary, mint, and edible botanicals.",
+      "icon": "Sprout"
+    },
+    {
+      "id": "cat_honey",
+      "name": "Honey & Preserves",
+      "slug": "honey-preserves",
+      "description": "Raw wildflower honey, small-batch preserves, and farm-pressed artisanal oils.",
+      "icon": "Jar"
+    },
+    {
+      "id": "cat_poultry",
+      "name": "Poultry & Meat",
+      "slug": "poultry-meat",
+      "description": "Free-range poultry, grass-fed meats, and certified humane farm cuts.",
+      "icon": "Beef"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod_heirloom_tomatoes",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "seller_location": "Highland Organic Valley",
+      "category_id": "cat_vegetables",
+      "category_name": "Vegetables",
+      "title": "Vine-Ripened Heirloom Tomatoes",
+      "description": "Grown naturally in mineral-rich soil without synthetic pesticides. Juicy, rich in lycopene, and hand-picked with the vine attached for maximum aroma and shelf life. Ideal for fresh salads, sauces, and gourmet culinary dishes.",
+      "price": 4.8,
+      "unit": "crate",
+      "stock_quantity": 45,
+      "location": "Highland Organic Valley, Eldoret Region",
+      "image_url": "/src/assets/images/farmlink_produce_vegetables_1790495415096.jpg",
+      "images": [
+        "/src/assets/images/farmlink_produce_vegetables_1790495415096.jpg",
+        "/src/assets/images/farmlink_hero_produce_1790495404243.jpg"
+      ],
+      "is_available": true,
+      "is_organic": true,
+      "harvest_date": "2026-09-26",
+      "rating": 4.9,
+      "reviews_count": 18,
+      "created_at": "2026-09-15T09:00:00.000Z",
+      "updated_at": "2026-09-26T12:00:00.000Z"
+    },
+    {
+      "id": "prod_crisp_apples",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "seller_location": "Highland Organic Valley",
+      "category_id": "cat_fruits",
+      "category_name": "Fruits & Orchards",
+      "title": "Crisp Mountain Orchard Apples",
+      "description": "Sweet, snappy, and aromatic apples picked straight from high-altitude orchard trees. Unwaxed, pesticide-free, and carefully packed in breathable wooden boxes to prevent bruising.",
+      "price": 3.5,
+      "unit": "kg",
+      "stock_quantity": 120,
+      "location": "Highland Organic Valley, Eldoret Region",
+      "image_url": "/src/assets/images/farmlink_produce_fruits_1790495425799.jpg",
+      "images": [
+        "/src/assets/images/farmlink_produce_fruits_1790495425799.jpg"
+      ],
+      "is_available": true,
+      "is_organic": true,
+      "harvest_date": "2026-09-25",
+      "rating": 4.8,
+      "reviews_count": 24,
+      "created_at": "2026-09-18T10:30:00.000Z",
+      "updated_at": "2026-09-25T14:00:00.000Z"
+    },
+    {
+      "id": "prod_pasture_eggs",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "seller_location": "Highland Organic Valley",
+      "category_id": "cat_dairy",
+      "category_name": "Dairy & Eggs",
+      "title": "Pasture-Raised Golden Yolk Eggs",
+      "description": "Fresh brown eggs from free-ranging hens feeding on open clover meadows and non-GMO grains. Deep amber yolks with rich flavor and high omega-3 fatty acids. Packed in cushioned 30-egg trays.",
+      "price": 6.2,
+      "unit": "crate",
+      "stock_quantity": 60,
+      "location": "Highland Organic Valley, Eldoret Region",
+      "image_url": "/src/assets/images/farmlink_produce_dairy_eggs_1790495436784.jpg",
+      "images": [
+        "/src/assets/images/farmlink_produce_dairy_eggs_1790495436784.jpg"
+      ],
+      "is_available": true,
+      "is_organic": true,
+      "harvest_date": "2026-09-26",
+      "rating": 5,
+      "reviews_count": 32,
+      "created_at": "2026-09-20T08:00:00.000Z",
+      "updated_at": "2026-09-26T07:00:00.000Z"
+    },
+    {
+      "id": "prod_rainbow_carrots",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "seller_location": "Highland Organic Valley",
+      "category_id": "cat_vegetables",
+      "category_name": "Vegetables",
+      "title": "Sweet Rainbow Carrots with Tops",
+      "description": "Heritage purple, yellow, and deep orange sweet carrots harvested with healthy green tops intact. Super crunchy and bursting with natural sweetness. Washed in fresh spring water.",
+      "price": 2.9,
+      "unit": "bundle",
+      "stock_quantity": 85,
+      "location": "Highland Organic Valley, Eldoret Region",
+      "image_url": "/src/assets/images/farmlink_hero_produce_1790495404243.jpg",
+      "images": [
+        "/src/assets/images/farmlink_hero_produce_1790495404243.jpg"
+      ],
+      "is_available": true,
+      "is_organic": true,
+      "harvest_date": "2026-09-26",
+      "rating": 4.7,
+      "reviews_count": 12,
+      "created_at": "2026-09-21T11:00:00.000Z",
+      "updated_at": "2026-09-26T09:00:00.000Z"
+    },
+    {
+      "id": "prod_raw_milk",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "seller_location": "Highland Organic Valley",
+      "category_id": "cat_dairy",
+      "category_name": "Dairy & Eggs",
+      "title": "Grass-Fed Whole Jersey Milk",
+      "description": "Unprocessed, rich creamy whole milk from pasture-grazed Jersey cows. Naturally high in butterfat and A2 beta-casein proteins. Chilled immediately at the dairy parlour.",
+      "price": 3.2,
+      "unit": "litre",
+      "stock_quantity": 40,
+      "location": "Highland Organic Valley, Eldoret Region",
+      "image_url": "/src/assets/images/farmlink_produce_dairy_eggs_1790495436784.jpg",
+      "images": [
+        "/src/assets/images/farmlink_produce_dairy_eggs_1790495436784.jpg"
+      ],
+      "is_available": true,
+      "is_organic": true,
+      "harvest_date": "2026-09-27",
+      "rating": 4.9,
+      "reviews_count": 15,
+      "created_at": "2026-09-22T06:30:00.000Z",
+      "updated_at": "2026-09-27T06:00:00.000Z"
+    },
+    {
+      "id": "prod_sweet_peaches",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "seller_location": "Highland Organic Valley",
+      "category_id": "cat_fruits",
+      "category_name": "Fruits & Orchards",
+      "title": "Sun-Drenched Freestone Peaches",
+      "description": "Juicy, fragrant freestone peaches with velvety skin. Hand-graded for optimal ripeness and sweetness. Perfect for direct consumption, baking, or canning.",
+      "price": 5.5,
+      "unit": "box",
+      "stock_quantity": 30,
+      "location": "Highland Organic Valley, Eldoret Region",
+      "image_url": "/src/assets/images/farmlink_produce_fruits_1790495425799.jpg",
+      "images": [
+        "/src/assets/images/farmlink_produce_fruits_1790495425799.jpg"
+      ],
+      "is_available": true,
+      "is_organic": true,
+      "harvest_date": "2026-09-25",
+      "rating": 4.8,
+      "reviews_count": 9,
+      "created_at": "2026-09-23T14:15:00.000Z",
+      "updated_at": "2026-09-25T16:00:00.000Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev_1",
+      "product_id": "prod_heirloom_tomatoes",
+      "user_id": "user_buyer_001",
+      "user_name": "Elena Vance",
+      "rating": 5,
+      "comment": "Incredible taste! You can immediately smell the fresh vine. The tomatoes arrived in perfect condition without a single bruise.",
+      "created_at": "2026-09-20T14:30:00.000Z"
+    },
+    {
+      "id": "rev_2",
+      "product_id": "prod_pasture_eggs",
+      "user_id": "user_buyer_001",
+      "user_name": "Elena Vance",
+      "rating": 5,
+      "comment": "Deep orange yolks and very sturdy shells. Best poached eggs we have ever made at home. Definitely reordering weekly.",
+      "created_at": "2026-09-22T09:15:00.000Z"
+    },
+    {
+      "id": "rev_3",
+      "product_id": "prod_crisp_apples",
+      "user_id": "user_buyer_002",
+      "user_name": "Marcus Brody",
+      "rating": 5,
+      "comment": "Super crisp, sweet and tart balance is spot on. Farmer Thomas was very prompt with answering pickup questions.",
+      "created_at": "2026-09-24T16:00:00.000Z"
+    }
+  ],
+  "cart_items": [],
+  "orders": [
+    {
+      "id": "ord_1001",
+      "order_number": "FL-2026-8812",
+      "buyer_id": "user_buyer_001",
+      "buyer_name": "Elena Vance",
+      "buyer_email": "buyer@farmlink.com",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "status": "confirmed",
+      "total_amount": 22,
+      "shipping_address": "742 Evergreen Terrace, Apt 4B, Riverside Metro",
+      "phone": "+1 (555) 876-5432",
+      "notes": "Please leave in shaded porch box if out.",
+      "items": [
+        {
+          "id": "ord_item_1",
+          "order_id": "ord_1001",
+          "product_id": "prod_heirloom_tomatoes",
+          "product_title": "Vine-Ripened Heirloom Tomatoes",
+          "image_url": "/src/assets/images/farmlink_produce_vegetables_1790495415096.jpg",
+          "unit_price": 4.8,
+          "unit": "crate",
+          "quantity": 2,
+          "subtotal": 9.6
+        },
+        {
+          "id": "ord_item_2",
+          "order_id": "ord_1001",
+          "product_id": "prod_pasture_eggs",
+          "product_title": "Pasture-Raised Golden Yolk Eggs",
+          "image_url": "/src/assets/images/farmlink_produce_dairy_eggs_1790495436784.jpg",
+          "unit_price": 6.2,
+          "unit": "crate",
+          "quantity": 2,
+          "subtotal": 12.4
+        }
+      ],
+      "created_at": "2026-09-26T10:20:00.000Z",
+      "updated_at": "2026-09-26T11:00:00.000Z"
+    }
+  ],
+  "favorites": [
+    {
+      "id": "fav_1",
+      "user_id": "user_buyer_001",
+      "product_id": "prod_heirloom_tomatoes",
+      "created_at": "2026-09-20T12:00:00.000Z"
+    },
+    {
+      "id": "fav_2",
+      "user_id": "user_buyer_001",
+      "product_id": "prod_pasture_eggs",
+      "created_at": "2026-09-22T08:00:00.000Z"
+    }
+  ],
+  "conversations": [
+    {
+      "id": "conv_101",
+      "buyer_id": "user_buyer_001",
+      "buyer_name": "Elena Vance",
+      "seller_id": "user_farmer_001",
+      "seller_name": "Thomas Kiptoo",
+      "product_id": "prod_heirloom_tomatoes",
+      "product_title": "Vine-Ripened Heirloom Tomatoes",
+      "last_message": "Your crates are packaged and will dispatch first thing tomorrow morning!",
+      "last_message_at": "2026-09-26T11:05:00.000Z",
+      "unread_by": [],
+      "created_at": "2026-09-26T10:45:00.000Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg_1",
+      "conversation_id": "conv_101",
+      "sender_id": "user_buyer_001",
+      "sender_name": "Elena Vance",
+      "receiver_id": "user_farmer_001",
+      "text": "Hi Thomas! Just placed an order for 2 crates of heirloom tomatoes and eggs. Could you ensure the tomatoes are firm for transport?",
+      "created_at": "2026-09-26T10:45:00.000Z"
+    },
+    {
+      "id": "msg_2",
+      "conversation_id": "conv_101",
+      "sender_id": "user_farmer_001",
+      "sender_name": "Thomas Kiptoo",
+      "receiver_id": "user_buyer_001",
+      "text": "Hello Elena, thank you so much! Absolutely, I hand-selected firm vine tomatoes with high aroma today. Your crates are packaged and will dispatch first thing tomorrow morning!",
+      "created_at": "2026-09-26T11:05:00.000Z"
+    }
+  ]
+}
