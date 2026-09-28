@@ -25,6 +25,19 @@
       "bio": "Culinary chef and farm-to-table enthusiast sourcing fresh weekly ingredients for home and boutique catering.",
       "avatar_url": "",
       "created_at": "2026-02-01T10:00:00.000Z"
+    },
+    {
+      "id": "user_1790620041713_03ryo",
+      "name": "Thabita Jeptoo",
+      "email": "thabitajeptoo004@gmail.com",
+      "password_hash": "$2b$10$Qf/ugYQ9OPk8L3aqIoCVSuzGFvAFLd.FxxLzyknlYT3SMA..6UNAe",
+      "role": "buyer",
+      "phone": "+254718150850",
+      "location": "Eldoret ,Kapsabet",
+      "address": "",
+      "bio": "",
+      "avatar_url": "",
+      "created_at": "2026-09-28T18:27:21.713Z"
     }
   ],
   "categories": [
