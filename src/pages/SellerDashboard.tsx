@@ -23,11 +23,15 @@ import { useToast } from '../context/ToastContext';
 interface SellerDashboardProps {
   onContactBuyer: (buyerId: string, productId?: string, initialText?: string) => void;
   onSelectProduct: (id: string) => void;
+  addProductRequested: boolean;
+  onAddProductRequestHandled: () => void;
 }
 
 export const SellerDashboard: React.FC<SellerDashboardProps> = ({
   onContactBuyer,
   onSelectProduct,
+  addProductRequested,
+  onAddProductRequestHandled,
 }) => {
   const { user, getAuthHeaders, updateProfile } = useAuth();
   const { showToast } = useToast();
@@ -98,6 +102,13 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (addProductRequested && !isLoading) {
+      openAddModal();
+      onAddProductRequestHandled();
+    }
+  }, [addProductRequested, isLoading, onAddProductRequestHandled]);
 
   const openAddModal = () => {
     setEditingProductId(null);

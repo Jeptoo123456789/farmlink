@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, User, LogOut, Menu, X, LayoutDashboard, MessageSquare } from 'lucide-react';
+import { ShoppingBag, Plus, LogOut, Menu, X, LayoutDashboard, MessageSquare } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
@@ -7,9 +7,10 @@ interface NavbarProps {
   currentTab: string;
   onNavigate: (tab: string) => void;
   onOpenAuth: (initialMode?: 'login' | 'register', defaultRole?: 'buyer' | 'seller') => void;
+  onAddProduct: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenAuth }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenAuth, onAddProduct }) => {
   const { user, logout } = useAuth();
   const { itemCount, toggleCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,6 +64,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenAu
 
           {/* Zone 3: 1-2 primary actions */}
           <div className="flex items-center gap-3">
+            {user?.role === 'seller' && (
+              <button
+                onClick={onAddProduct}
+                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-emerald-800 hover:bg-emerald-900 rounded-lg transition-colors whitespace-nowrap"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="hidden sm:inline">Add Produce</span>
+              </button>
+            )}
+
             {/* Cart Trigger */}
             <button
               onClick={toggleCart}
@@ -190,6 +201,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenAu
 
           {user ? (
             <div className="pt-2 border-t border-stone-100 space-y-1">
+              {user.role === 'seller' && (
+                <button
+                  onClick={() => {
+                    onAddProduct();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-white bg-emerald-800 hover:bg-emerald-900 rounded-lg flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Produce
+                </button>
+              )}
               <button
                 onClick={() => handleNavClick(user.role === 'seller' ? 'seller-dashboard' : 'buyer-dashboard')}
                 className="w-full text-left px-3 py-2 text-sm text-emerald-800 font-medium hover:bg-stone-50 rounded-lg flex items-center gap-2"

@@ -40,6 +40,7 @@ function AppContent() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [authDefaultRole, setAuthDefaultRole] = useState<'buyer' | 'seller'>('buyer');
+  const [addProductRequested, setAddProductRequested] = useState(false);
 
   // Scroll to top on tab change
   useEffect(() => {
@@ -99,6 +100,22 @@ function AppContent() {
     setIsAuthOpen(true);
   };
 
+  const handleAddProduct = () => {
+    if (!user) {
+      handleOpenAuth('login', 'seller');
+      showToast('Sign in as a farmer to add produce.', 'info');
+      return;
+    }
+    if (user.role !== 'seller') {
+      showToast('Only farmer accounts can add produce listings.', 'error');
+      return;
+    }
+
+    setSelectedProductId(null);
+    setCurrentTab('seller-dashboard');
+    setAddProductRequested(true);
+  };
+
   const handleContactFarmer = (sellerId: string, productId?: string, productTitle?: string) => {
     if (!user) {
       handleOpenAuth('login');
@@ -129,6 +146,7 @@ function AppContent() {
         currentTab={currentTab}
         onNavigate={handleNavigate}
         onOpenAuth={handleOpenAuth}
+        onAddProduct={handleAddProduct}
       />
 
       {/* Main View Area */}
@@ -179,6 +197,8 @@ function AppContent() {
           <SellerDashboard
             onContactBuyer={handleContactBuyer}
             onSelectProduct={handleSelectProduct}
+            addProductRequested={addProductRequested}
+            onAddProductRequestHandled={() => setAddProductRequested(false)}
           />
         )}
 
