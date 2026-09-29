@@ -8,12 +8,12 @@ import dotenv from "dotenv";
 import { Router } from "express";
 
 // server/db.ts
-import fs from "fs";
+import fs2 from "fs";
 import path from "path";
 var DB_FILE = path.resolve(process.cwd(), "data", "farmlink_db.json");
 function ensureDirSync(dir) {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  if (!fs2.existsSync(dir)) {
+    fs2.mkdirSync(dir, { recursive: true });
   }
 }
 var dbCache = null;
@@ -21,9 +21,9 @@ function getDatabase() {
   if (dbCache) return dbCache;
   const dataDir = path.dirname(DB_FILE);
   ensureDirSync(dataDir);
-  if (fs.existsSync(DB_FILE)) {
+  if (fs2.existsSync(DB_FILE)) {
     try {
-      const content = fs.readFileSync(DB_FILE, "utf-8");
+      const content = fs2.readFileSync(DB_FILE, "utf-8");
       dbCache = JSON.parse(content);
       return dbCache;
     } catch (e) {
@@ -39,8 +39,8 @@ function saveDatabase() {
   const dataDir = path.dirname(DB_FILE);
   ensureDirSync(dataDir);
   const tempFile = `${DB_FILE}.tmp`;
-  fs.writeFileSync(tempFile, JSON.stringify(dbCache, null, 2), "utf-8");
-  fs.renameSync(tempFile, DB_FILE);
+  fs2.writeFileSync(tempFile, JSON.stringify(dbCache, null, 2), "utf-8");
+  fs2.renameSync(tempFile, DB_FILE);
 }
 function getInitialSeed() {
   const farmerHash = "$2a$10$wQ9K4gA1jXjO9z6R.uR0nOBb9C6f4Xm6p8Yk1J6hFqHqN9sM7d3xK";
@@ -1663,9 +1663,13 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path2.resolve(__dirname, "dist");
+    const indexPath = path2.resolve(distPath, "index.html");
+    if (!fs.existsSync(indexPath)) {
+      throw new Error(`Production frontend build not found at ${indexPath}. Run "npm run build" before starting the server.`);
+    }
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
-      res.sendFile(path2.resolve(distPath, "index.html"));
+      res.sendFile(indexPath);
     });
   }
   app.listen(PORT, "0.0.0.0", () => {
