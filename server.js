@@ -1668,6 +1668,7 @@ async function startServer() {
     if (!fs2.existsSync(indexPath)) {
       throw new Error(`Production frontend build not found at ${indexPath}. Run "npm run build" before starting the server.`);
     }
+    app.use("/src/assets/images", express.static(path2.resolve(__dirname, "src/assets/images")));
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(indexPath);

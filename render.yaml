@@ -3,7 +3,7 @@ services:
     name: farmlink
     runtime: node
     plan: free
-    buildCommand: npm ci --include=dev && npm run build && node -e "if (!require('node:fs').existsSync('dist/index.html')) { console.error('Build failed: dist/index.html was not generated'); process.exit(1); }"
+    buildCommand: npm ci --include=dev && npm run build && node -e "const fs = require('node:fs'); const files = ['farmlink_farmer_seller_1790495447477.jpg', 'farmlink_hero_produce_1790495404243.jpg', 'farmlink_produce_dairy_eggs_1790495436784.jpg', 'farmlink_produce_fruits_1790495425799.jpg', 'farmlink_produce_vegetables_1790495415096.jpg']; for (const file of files) { if (!fs.existsSync('src/assets/images/' + file)) { console.error('Build failed: missing project image src/assets/images/' + file); process.exit(1); } } if (!fs.existsSync('dist/index.html')) { console.error('Build failed: dist/index.html was not generated'); process.exit(1); }"
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
