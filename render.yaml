@@ -3,7 +3,7 @@ services:
     name: farmlink
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --include=dev && npm run build && node -e "if (!require('node:fs').existsSync('dist/index.html')) { console.error('Build failed: dist/index.html was not generated'); process.exit(1); }"
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:

@@ -55,9 +55,13 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.resolve(__dirname, 'dist');
+    const indexPath = path.resolve(distPath, 'index.html');
+    if (!fs.existsSync(indexPath)) {
+      throw new Error(`Production frontend build not found at ${indexPath}. Run "npm run build" before starting the server.`);
+    }
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      res.sendFile(path.resolve(distPath, 'index.html'));
+      res.sendFile(indexPath);
     });
   }
 
