@@ -158,7 +158,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             </div>
             <p className="text-[11px] text-stone-400 tabular-nums">
-              {product.stock_quantity > 0 ? `${product.stock_quantity} available` : 'Sold out'}
+              {product.stock_quantity > 0 ? `${product.stock_quantity} ${product.unit} available` : 'Sold out'}
             </p>
           </div>
 
