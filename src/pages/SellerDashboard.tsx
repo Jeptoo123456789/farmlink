@@ -843,11 +843,8 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
                         reader.onerror = () => reject(new Error('Could not read image'));
                         reader.readAsDataURL(file);
                       })));
-                      setPhotoDataUrls(current => {
-                        const nextPhotos = [...current, ...dataUrls];
-                        if (current.length === 0 && nextPhotos.length > 0) setMainPhotoIndex(0);
-                        return nextPhotos;
-                      });
+                      if (photoDataUrls.length === 0 && dataUrls.length > 0) setMainPhotoIndex(0);
+                      setPhotoDataUrls(current => [...current, ...dataUrls]);
                     } catch {
                       showToast('Could not read one of the selected photos.', 'error');
                     }
