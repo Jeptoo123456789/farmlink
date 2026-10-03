@@ -1,8 +1,53 @@
 import { Router } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { getDatabase, saveDatabase, Product, Review, Favorite } from '../db.js';
 import { requireAuth, requireSeller, optionalAuth, AuthenticatedRequest } from '../auth.js';
 
 const router = Router();
+const MAX_PRODUCT_IMAGE_BYTES = 2 * 1024 * 1024;
+const MAX_PRODUCT_IMAGES = 4;
+
+class UploadValidationError extends Error {}
+
+function saveUploadedImages(value: unknown): string[] {
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.length > MAX_PRODUCT_IMAGES) {
+    throw new UploadValidationError(`Choose no more than ${MAX_PRODUCT_IMAGES} photos.`);
+  }
+
+  const uploadDirectory = path.resolve(process.cwd(), 'data', 'uploads');
+  fs.mkdirSync(uploadDirectory, { recursive: true });
+
+  return value.map((dataUrl: unknown) => {
+    if (typeof dataUrl !== 'string') {
+      throw new UploadValidationError('One of the uploaded photos is invalid.');
+    }
+
+    const match = dataUrl.match(/^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/);
+    if (!match) {
+      throw new UploadValidationError('Photos must be JPG, PNG, or WebP images.');
+    }
+
+    const [, mimeType, encodedImage] = match;
+    const imageBuffer = Buffer.from(encodedImage, 'base64');
+    if (imageBuffer.length === 0 || imageBuffer.length > MAX_PRODUCT_IMAGE_BYTES || imageBuffer.toString('base64') !== encodedImage) {
+      throw new UploadValidationError('Each photo must be 2 MB or smaller and contain valid image data.');
+    }
+
+    const isJpeg = mimeType === 'jpeg' && imageBuffer[0] === 0xff && imageBuffer[1] === 0xd8 && imageBuffer[2] === 0xff;
+    const isPng = mimeType === 'png' && imageBuffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    const isWebp = mimeType === 'webp' && imageBuffer.toString('ascii', 0, 4) === 'RIFF' && imageBuffer.toString('ascii', 8, 12) === 'WEBP';
+    if (!isJpeg && !isPng && !isWebp) {
+      throw new UploadValidationError('The uploaded file contents do not match a supported image type.');
+    }
+
+    const extension = mimeType === 'jpeg' ? 'jpg' : mimeType;
+    const filename = `produce_${Date.now()}_${Math.random().toString(36).slice(2, 10)}.${extension}`;
+    fs.writeFileSync(path.join(uploadDirectory, filename), imageBuffer, { flag: 'wx' });
+    return `/uploads/${filename}`;
+  });
+}
 
 // GET all products with filtering, search, pagination
 router.get('/', optionalAuth, (req: AuthenticatedRequest, res) => {
@@ -184,6 +229,8 @@ router.post('/', requireSeller, (req: AuthenticatedRequest, res) => {
       location,
       image_url,
       images,
+      uploaded_images,
+      main_image_index,
       is_organic,
       harvest_date,
     } = req.body;
@@ -205,6 +252,17 @@ router.post('/', requireSeller, (req: AuthenticatedRequest, res) => {
     const category_name = category ? category.name : 'General Farm Produce';
 
     const defaultImg = '/src/assets/images/farmlink_produce_vegetables_1790495415096.jpg';
+    const uploadedImageUrls = saveUploadedImages(uploaded_images);
+    const coverIndex = Number.isInteger(Number(main_image_index)) ? Number(main_image_index) : 0;
+    if (uploadedImageUrls.length && (coverIndex < 0 || coverIndex >= uploadedImageUrls.length)) {
+      return res.status(400).json({ error: 'Choose a valid cover photo.' });
+    }
+    const coverImage = uploadedImageUrls[coverIndex] || image_url || defaultImg;
+    const productImages = uploadedImageUrls.length
+      ? uploadedImageUrls
+      : Array.isArray(images) && images.length > 0
+        ? images
+        : [coverImage];
 
     const newProduct: Product = {
       id: `prod_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
@@ -219,8 +277,8 @@ router.post('/', requireSeller, (req: AuthenticatedRequest, res) => {
       unit: unit || 'kg',
       stock_quantity: parseInt(Number(stock_quantity).toString(), 10),
       location: (location || req.user!.location || 'Farm Direct').trim(),
-      image_url: image_url || defaultImg,
-      images: Array.isArray(images) && images.length > 0 ? images : [image_url || defaultImg],
+      image_url: coverImage,
+      images: productImages,
       is_available: Number(stock_quantity) > 0,
       is_organic: Boolean(is_organic),
       harvest_date: harvest_date || new Date().toISOString().split('T')[0],
@@ -238,6 +296,9 @@ router.post('/', requireSeller, (req: AuthenticatedRequest, res) => {
       product: newProduct,
     });
   } catch (err: any) {
+    if (err instanceof UploadValidationError) {
+      return res.status(400).json({ error: err.message });
+    }
     console.error('Error creating product:', err);
     return res.status(500).json({ error: 'Failed to create product listing.' });
   }
@@ -268,6 +329,8 @@ router.put('/:id', requireSeller, (req: AuthenticatedRequest, res) => {
       location,
       image_url,
       images,
+      uploaded_images,
+      main_image_index,
       is_available,
       is_organic,
       harvest_date,
@@ -293,8 +356,18 @@ router.put('/:id', requireSeller, (req: AuthenticatedRequest, res) => {
       if (cat) product.category_name = cat.name;
     }
     if (location !== undefined) product.location = location.trim();
-    if (image_url !== undefined) product.image_url = image_url;
-    if (images !== undefined && Array.isArray(images)) product.images = images;
+    const uploadedImageUrls = saveUploadedImages(uploaded_images);
+    if (uploadedImageUrls.length) {
+      const coverIndex = Number.isInteger(Number(main_image_index)) ? Number(main_image_index) : 0;
+      if (coverIndex < 0 || coverIndex >= uploadedImageUrls.length) {
+        return res.status(400).json({ error: 'Choose a valid cover photo.' });
+      }
+      product.image_url = uploadedImageUrls[coverIndex];
+      product.images = uploadedImageUrls;
+    } else {
+      if (image_url !== undefined) product.image_url = image_url;
+      if (images !== undefined && Array.isArray(images)) product.images = images;
+    }
     if (is_available !== undefined) product.is_available = Boolean(is_available);
     if (is_organic !== undefined) product.is_organic = Boolean(is_organic);
     if (harvest_date !== undefined) product.harvest_date = harvest_date;
@@ -307,6 +380,9 @@ router.put('/:id', requireSeller, (req: AuthenticatedRequest, res) => {
       product,
     });
   } catch (err: any) {
+    if (err instanceof UploadValidationError) {
+      return res.status(400).json({ error: err.message });
+    }
     return res.status(500).json({ error: 'Failed to update product.' });
   }
 });

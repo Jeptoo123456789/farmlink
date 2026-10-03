@@ -23,6 +23,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const [isAdding, setIsAdding] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const createdAt = Date.parse(product.created_at);
+  const isNewProduct = Number.isFinite(createdAt) && Date.now() - createdAt >= 0 && Date.now() - createdAt < 7 * 24 * 60 * 60 * 1000;
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -79,6 +81,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <span className="text-xs font-medium text-stone-500">{product.title}</span>
             <span className="text-[11px] text-stone-400 mt-1">Farm Direct</span>
           </div>
+        )}
+
+        {isNewProduct && (
+          <span className="absolute left-2.5 top-2.5 rounded bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase text-amber-950 shadow-sm">
+            New
+          </span>
         )}
 
         {/* Favorite Action Button */}

@@ -25,7 +25,8 @@ const isProd = process.env.NODE_ENV === 'production';
 getDatabase();
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '12mb' }));
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'data', 'uploads')));
 
 // API Routes
 app.use('/api/auth', authRouter);
