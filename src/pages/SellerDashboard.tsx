@@ -15,6 +15,7 @@ import {
   AlertCircle,
   Truck,
   XCircle,
+  Upload,
 } from 'lucide-react';
 import { Product, Order, Category, UnitType, OrderStatus } from '../types';
 import { useAuth } from '../context/AuthContext';
@@ -54,6 +55,8 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
   const [categoryId, setCategoryId] = useState('');
   const [location, setLocation] = useState(user?.location || '');
   const [imageUrl, setImageUrl] = useState('');
+  const [photoDataUrls, setPhotoDataUrls] = useState<string[]>([]);
+  const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
   const [isOrganic, setIsOrganic] = useState(false);
   const [harvestDate, setHarvestDate] = useState(new Date().toISOString().split('T')[0]);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
@@ -118,9 +121,11 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
     setUnit('kg');
     setStockQuantity('');
     setCategoryId(categories[0]?.id || 'cat_vegetables');
-    setLocation(user?.location || 'Organic Valley');
-    setImageUrl('/src/assets/images/farmlink_produce_vegetables_1790495415096.jpg');
-    setIsOrganic(true);
+    setLocation(user?.location || '');
+    setImageUrl('');
+    setPhotoDataUrls([]);
+    setMainPhotoIndex(0);
+    setIsOrganic(false);
     setHarvestDate(new Date().toISOString().split('T')[0]);
     setIsProductModalOpen(true);
   };
@@ -135,6 +140,8 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
     setCategoryId(prod.category_id);
     setLocation(prod.location);
     setImageUrl(prod.image_url);
+    setPhotoDataUrls([]);
+    setMainPhotoIndex(0);
     setIsOrganic(prod.is_organic);
     setHarvestDate(prod.harvest_date);
     setIsProductModalOpen(true);
@@ -144,6 +151,10 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
     e.preventDefault();
     if (!title.trim() || !price || !stockQuantity || !categoryId) {
       showToast('Please fill in all required crop fields.', 'error');
+      return;
+    }
+    if (!editingProductId && photoDataUrls.length === 0) {
+      showToast('Upload at least one produce photo before adding this listing.', 'error');
       return;
     }
 
@@ -157,7 +168,9 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
         stock_quantity: parseInt(stockQuantity, 10),
         category_id: categoryId,
         location: location.trim(),
-        image_url: imageUrl,
+        image_url: photoDataUrls[mainPhotoIndex] || imageUrl,
+        uploaded_images: photoDataUrls,
+        main_image_index: mainPhotoIndex,
         is_organic: isOrganic,
         harvest_date: harvestDate,
         is_available: parseInt(stockQuantity, 10) > 0,
@@ -259,7 +272,7 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
           className="py-2.5 px-4 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm self-start sm:self-auto transition-colors"
         >
           <Plus className="w-4 h-4" />
-          List New Harvest
+          Add New Produce
         </button>
       </div>
 
@@ -363,7 +376,7 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
                 onClick={openAddModal}
                 className="px-4 py-2 bg-emerald-800 text-white rounded-lg text-xs font-semibold"
               >
-                List Your First Crop
+                Add New Produce
               </button>
             </div>
           ) : (
@@ -663,7 +676,7 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
                   Harvest Inventory
                 </span>
                 <h3 className="text-base font-bold text-stone-900">
-                  {editingProductId ? 'Edit Produce Listing' : 'List New Farm Harvest'}
+                  {editingProductId ? 'Edit Produce Listing' : 'Add New Produce'}
                 </h3>
               </div>
               <button
@@ -790,33 +803,97 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
                 />
               </div>
 
-              {/* Photo selector from generated assets */}
+              {/* Produce photo uploads */}
               <div>
-                <label className="block text-xs font-medium text-stone-700 mb-1">Produce Photography</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[
-                    '/src/assets/images/farmlink_produce_vegetables_1790495415096.jpg',
-                    '/src/assets/images/farmlink_produce_fruits_1790495425799.jpg',
-                    '/src/assets/images/farmlink_produce_dairy_eggs_1790495436784.jpg',
-                    '/src/assets/images/farmlink_hero_produce_1790495404243.jpg',
-                  ].map((img, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setImageUrl(img)}
-                      className={`relative aspect-[4/3] rounded-lg overflow-hidden border-2 transition-all ${
-                        imageUrl === img ? 'border-emerald-700 ring-2 ring-emerald-700/30' : 'border-stone-200 opacity-60 hover:opacity-100'
-                      }`}
-                    >
-                      <img src={img} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
-                      {imageUrl === img && (
-                        <div className="absolute inset-0 bg-emerald-900/30 flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between gap-3 mb-1">
+                  <label htmlFor="produce-photos" className="block text-xs font-medium text-stone-700">
+                    Produce Photos {!editingProductId && '*'}
+                  </label>
+                  <span className="text-[10px] text-stone-400">Up to 4 photos, 2 MB each</span>
                 </div>
+                <input
+                  id="produce-photos"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className="sr-only"
+                  onChange={async e => {
+                    const selectedFiles = Array.from(e.target.files || []);
+                    e.target.value = '';
+                    const validFiles = selectedFiles.filter(file => {
+                      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                        showToast(`${file.name}: choose a JPG, PNG, or WebP image.`, 'error');
+                        return false;
+                      }
+                      if (file.size > 2 * 1024 * 1024) {
+                        showToast(`${file.name}: images must be 2 MB or smaller.`, 'error');
+                        return false;
+                      }
+                      return true;
+                    });
+                    const remainingSlots = Math.max(0, 4 - photoDataUrls.length);
+                    if (validFiles.length > remainingSlots) {
+                      showToast('A listing can include up to 4 photos.', 'error');
+                    }
+                    const filesToRead = validFiles.slice(0, remainingSlots);
+                    try {
+                      const dataUrls = await Promise.all(filesToRead.map(file => new Promise<string>((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('Could not read image'));
+                        reader.onerror = () => reject(new Error('Could not read image'));
+                        reader.readAsDataURL(file);
+                      })));
+                      setPhotoDataUrls(current => {
+                        const nextPhotos = [...current, ...dataUrls];
+                        if (current.length === 0 && nextPhotos.length > 0) setMainPhotoIndex(0);
+                        return nextPhotos;
+                      });
+                    } catch {
+                      showToast('Could not read one of the selected photos.', 'error');
+                    }
+                  }}
+                />
+                <label
+                  htmlFor="produce-photos"
+                  className="flex min-h-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-stone-300 bg-stone-50 px-4 py-4 text-center hover:border-emerald-700 hover:bg-emerald-50/40"
+                >
+                  <Upload className="h-5 w-5 text-emerald-800" />
+                  <span className="text-xs font-semibold text-stone-800">Choose produce photos</span>
+                  <span className="text-[10px] text-stone-500">JPG, PNG, or WebP</span>
+                </label>
+                {photoDataUrls.length > 0 ? (
+                  <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {photoDataUrls.map((photo, index) => (
+                      <div key={`${index}-${photo.slice(0, 32)}`} className={`relative aspect-[4/3] overflow-hidden rounded-lg border-2 ${mainPhotoIndex === index ? 'border-emerald-700' : 'border-stone-200'}`}>
+                        <img src={photo} alt={`Produce photo ${index + 1}`} className="h-full w-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => setMainPhotoIndex(index)}
+                          className="absolute bottom-1 left-1 rounded bg-white/95 px-1.5 py-1 text-[9px] font-semibold text-stone-800 shadow"
+                          aria-pressed={mainPhotoIndex === index}
+                        >
+                          {mainPhotoIndex === index ? 'Cover photo' : 'Set as cover'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPhotoDataUrls(current => current.filter((_, photoIndex) => photoIndex !== index));
+                            setMainPhotoIndex(current => current > index ? current - 1 : current === index ? 0 : current);
+                          }}
+                          className="absolute right-1 top-1 rounded-full bg-white/95 p-1 text-stone-700 shadow hover:text-rose-700"
+                          aria-label={`Remove photo ${index + 1}`}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : editingProductId && imageUrl ? (
+                  <div className="mt-3 flex items-center gap-3 text-[11px] text-stone-500">
+                    <img src={imageUrl} alt="Current produce cover" className="h-14 w-18 rounded object-cover" />
+                    <span>Current cover photo. Add new photos above to replace it.</span>
+                  </div>
+                ) : null}
               </div>
 
               {/* Organic toggle */}
@@ -845,7 +922,7 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
                   disabled={isSavingProduct}
                   className="px-5 py-2 text-xs font-semibold text-white bg-emerald-800 hover:bg-emerald-900 rounded-lg shadow-xs disabled:opacity-50"
                 >
-                  {isSavingProduct ? 'Saving Produce...' : editingProductId ? 'Save Changes' : 'Publish Produce'}
+                  {isSavingProduct ? 'Saving Produce...' : editingProductId ? 'Save Changes' : 'Add Produce'}
                 </button>
               </div>
             </form>
